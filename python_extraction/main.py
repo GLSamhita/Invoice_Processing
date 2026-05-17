@@ -61,36 +61,44 @@ async def extract_invoice(file: UploadFile = File(...)):
         {raw_text}
         """
 
-        # response = model.generate_content(prompt)
-
         if len(raw_text.strip()) > 50: # Digitally generated invoice
             print("\n--- DIGITAL PDF DETECTED ---\n")
             
             prompt = f"""
             Extract invoice details from this invoice text.
 
+            The PDF may contain one or more invoices.
+
             Return ONLY valid JSON.
 
-            Fields:
-            - vendor_name
-            - gstin
-            - pan
-            - invoice_number
-            - invoice_date
-            - due_date
-            - subtotal
-            - discount
-            - taxable_amount
-            - tax_amount
-            - cgst
-            - sgst
-            - igst
-            - total_amount
+            Output format:
+            {{
+            "invoices": [
+                {{
+                "vendor_name": null,
+                "gstin": null,
+                "pan": null,
+                "invoice_number": null,
+                "invoice_date": null,
+                "due_date": null,
+                "subtotal": null,
+                "discount": null,
+                "taxable_amount": null,
+                "tax_amount": null,
+                "cgst": null,
+                "sgst": null,
+                "igst": null,
+                "total_amount": null
+                }}
+            ]
+            }}
 
             Rules:
+            - Each invoice must be a separate object
             - Use snake_case keys
             - Monetary values must be numeric
             - If any field is unavailable, return null
+            - Return ONLY JSON and nothing else
 
             Invoice text:
             {raw_text}
@@ -166,7 +174,7 @@ async def extract_invoice(file: UploadFile = File(...)):
         return {
             "success": True,
             "data": parsed_json,
-            "flags": flags
+            "flags": all_flags
         }
 
     except Exception as e:
