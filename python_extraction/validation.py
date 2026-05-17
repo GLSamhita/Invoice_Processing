@@ -8,9 +8,9 @@ def validate_invoice(data):
     tax = float(data.get("tax") or 0)
     total = float(data.get("total_amount") or 0)
     expected_total = subtotal + tax
-    if abs(expected_total - total) > 2:
+    if abs(expected_total - total) > 2: #to account for rounding errors if any
         flags.append({
-            "code": "GST_MISMATCH",
+            "code": "TOTAL_MISMATCH",
             "message": "Subtotal + tax does not match total amount"
         })
 
@@ -32,20 +32,15 @@ def validate_invoice(data):
     invoice_date = data.get("invoice_date")
     if invoice_date:
         try:
-            parsed_date = datetime.strptime(
-                invoice_date,
-                "%d-%m-%Y"
-            )
-
+            parsed_date = datetime.strptime(invoice_date,"%d-%m-%Y")
             today = datetime.now()
-
+            
             if parsed_date > today:
                 flags.append({
                     "code": "FUTURE_DATED_INVOICE",
                     "message": "Invoice date is in the future"
                 })
 
-            # Old Invoice Validation (older than 1 year)
             if parsed_date < today - timedelta(days=365):
                 flags.append({
                     "code": "OLD_INVOICE",

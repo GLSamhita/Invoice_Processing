@@ -34,7 +34,7 @@ def process_invoice_pdf(temp_path):
     print("\n--- RAW TEXT ---\n")
     print(raw_text)
 
-    if len(raw_text.strip()) > 50: #digitally generated invoice PDf
+    if len(raw_text.strip()) > 50: #digitally generated invoice PDF, considers text
         print("\n--- DIGITALLY GENERATED INVOICE ---\n")
         prompt = f"""
         Extract invoice details from this invoice text.
@@ -73,7 +73,7 @@ def process_invoice_pdf(temp_path):
         """
         response = model.generate_content(prompt)
 
-    else: #scanned invoice PDF
+    else: #scanned invoice PDF, considers images
         print("\n--- SCANNED INVOICE ---\n")
         pages = convert_from_path(temp_path)
         response = model.generate_content([

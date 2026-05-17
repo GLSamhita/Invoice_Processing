@@ -10,4 +10,4 @@
 <br>9. for ease of reading the extracted information, navigate to the created exports folder and check the latest excel file.
 <br><br>
   
-_AI Usage in development:_ Used ChatGPT free tier to set up a basic structure of the system and code
+_AI Usage in development:_ Used ChatGPT free tier to set up a basic structure of the system and code, formatting outputs
