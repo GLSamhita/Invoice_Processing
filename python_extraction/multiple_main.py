@@ -16,7 +16,7 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY") #set as system variable
 genai.configure(api_key=api_key)
 app = FastAPI()
-model = genai.GenerativeModel("gemini-2-flash")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 def extract_text_from_pdf(pdf_path): #checking if any text can be extracted from the PDF
     text = ""
