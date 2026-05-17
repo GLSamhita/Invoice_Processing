@@ -1,16 +1,13 @@
 from datetime import datetime, timedelta
 
 def validate_invoice(data):
-
     flags = []
 
     # GST Mismatch Validation
     subtotal = float(data.get("subtotal") or 0)
     tax = float(data.get("tax") or 0)
     total = float(data.get("total_amount") or 0)
-
     expected_total = subtotal + tax
-
     if abs(expected_total - total) > 2:
         flags.append({
             "code": "GST_MISMATCH",
