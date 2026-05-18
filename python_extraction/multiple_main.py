@@ -27,6 +27,37 @@ def extract_text_from_pdf(pdf_path): #checking if any text can be extracted from
                 text += page_text + "\n"
     return text
 
+#expense classification - CapEx or OpEx (includes only a few categories)
+EXPENSE_CLASSIFICATION = {
+    "CapEx": {
+        "Computer Equipment": ["laptop", "desktop", "monitor","printer", "server", "hardware"],
+        "Furniture & Fixtures": ["chair", "desk", "table", "furniture"]
+    },
+    "OpEx": {
+        "Travel Expense": ["flight", "hotel", "uber", "ola", "cab"],
+        "Software Subscription": ["subscription", "saas", "cloud","zoom", "slack", "adobe"],
+        "Office Expenses": ["stationery", "office supplies", "paper","pen"]
+    }
+}
+
+def classify_invoice(invoice):
+    text = " ".join([
+        str(invoice.get("vendor_name", "")),
+        str(invoice.get("description", "")),
+        str(invoice.get("invoice_number", ""))
+    ]).lower()
+    for expense_type, categories in EXPENSE_CLASSIFICATION.items():
+        for category, keywords in categories.items():
+            if any(keyword in text for keyword in keywords):
+                return {
+                    "expense_type": expense_type
+                }
+
+    return {
+        "expense_type": "OpEx",
+        "ledger_category": "Miscellaneous Expense",
+    }
+
 # Single PDF processing
 def process_invoice_pdf(temp_path):
     raw_text = extract_text_from_pdf(temp_path)
@@ -57,7 +88,8 @@ def process_invoice_pdf(temp_path):
               "cgst": null,
               "sgst": null,
               "igst": null,
-              "total_amount": null
+              "total_amount": null,
+              "expense_type": null
             }}
           ]
         }}
@@ -98,7 +130,8 @@ def process_invoice_pdf(temp_path):
                   "cgst": null,
                   "sgst": null,
                   "igst": null,
-                  "total_amount": null
+                  "total_amount": null,
+                  "expense_type":null
                 }
               ]
             }
@@ -113,6 +146,8 @@ def process_invoice_pdf(temp_path):
     all_flags = []
     for invoice in parsed_json["invoices"]:
         flags = validate_invoice(invoice)
+        classification = classify_invoice(invoice)
+        invoice["expense_type"] = classification["expense_type"]
         all_flags.append({
             "invoice_number": invoice.get("invoice_number"),
             "flags": flags
@@ -144,7 +179,8 @@ def save_results_to_excel(results):
         "sgst",
         "igst",
         "total_amount",
-        "flags"
+        "flags",
+        "expense_type"
     ]
     ws.append(headers)
 
@@ -177,6 +213,7 @@ def save_results_to_excel(results):
                 invoice.get("sgst"),
                 invoice.get("igst"),
                 invoice.get("total_amount"),
+                invoice.get("expense_type"),
                 json.dumps(invoice_flags)
             ]
             ws.append(row)
