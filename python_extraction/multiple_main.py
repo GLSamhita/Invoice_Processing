@@ -54,8 +54,7 @@ def classify_invoice(invoice):
                 }
 
     return {
-        "expense_type": "OpEx",
-        "ledger_category": "Miscellaneous Expense",
+        "expense_type": "OpEx (miscellaneous)"
     }
 
 # Single PDF processing
