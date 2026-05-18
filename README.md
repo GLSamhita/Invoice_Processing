@@ -10,7 +10,7 @@
 <br>9. for ease of reading the extracted information, navigate to the created exports folder and check the latest excel file.
 <br><br>
   
-_AI Usage in development:_ Used ChatGPT free tier (GPT-5.5 Instant) to set up a basic structure of the system and code, formatting outputs
+_AI Usage in development:_ Used ChatGPT free tier (GPT-5.5 Instant) to set up a basic structure of the system and code, formatting code output
 
 <h4>Current Flow:</h4>
 PDF upload -> Extract raw text from file -> Determine if digitally generated or scanned invoice -> Use LLM to extract invoice information from each file: from raw text if digitally generated or images if scanned invoice -> Validate the information extracted and raise flags if any per file -> Export to spreadsheet
